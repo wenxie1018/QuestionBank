@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; 
-import Q1 from '../assets/imgs/Q_truefalse.jpg';
-import Q2 from '../assets/imgs/Q_option.jpg';
-import Q3 from '../assets/imgs/Q_truefalseoption.jpg';
+import Q1 from '../assets/imgs/Q_truefalse.png';
+import Q2 from '../assets/imgs/Q_option.png';
+import Q3 from '../assets/imgs/Q_truefalseoption.png';
 
 const route = useRoute();
 const router = useRouter();
