@@ -1,8 +1,10 @@
 // src/router/index.js
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory  } from 'vue-router';
 import TestSetup from '../views/TestSetup.vue';
 import ExamTemplate from '../views/ExamTemplate.vue';
-import GeneratedExam from '../views/GeneratedExam.vue'
+import GeneratedExam from '../views/GeneratedExam.vue';
+import Dashboard from '../views/DashBoard.vue';
+import StudentDashboard from '../views/StudentDashboard.vue';
 
 const routes = [
   {
@@ -20,11 +22,24 @@ const routes = [
     name: 'GeneratedExam',
     component: GeneratedExam,
   },
+  {
+    path: '/Dashboard',
+    name: 'Dashboard',
+    component: Dashboard,
+  },
+  {
+    path: '/student/:id', 
+    name: 'StudentDashboard',
+    component: StudentDashboard,
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0, behavior: 'smooth' };
+  },
 });
 
 export default router;

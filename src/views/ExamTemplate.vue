@@ -27,6 +27,9 @@ const selectTemplate = (templateId) => {
 // 定義 Modal 的顯示狀態
 const isModalVisible = ref(false); 
 
+// --- ⭐️ 新增：控制載入動畫的顯示狀態 ---
+const isLoading = ref(false);
+
 // 定義 computed 屬性，用來找到完整的模板物件
 const fullSelectedTemplate = computed(() => {
   return templates.value.find(t => t.id === selectedTemplate.value);
@@ -44,18 +47,30 @@ const handleShowConfirmation = () => {
 
 // Modal 中的確認按鈕邏輯
 const handleConfirmGeneration = () => {
-  // 這裡執行最終的生成邏輯，例如呼叫 API
-  // 組合所有需要提交的數據
+  // 1. 關閉確認 Modal
+  isModalVisible.value = false;
+  
+  // 2. 顯示載入動畫
+  isLoading.value = true;
+
+  // 3. 組合需要提交的數據
   const submissionData = {
     ...previousPageData,
-    template: fullSelectedTemplate.value
+    // 傳遞模板ID，而不是整個物件，讓 URL 更乾淨
+    templateId: fullSelectedTemplate.value.id 
   };
-  //alert(`準備生成試卷！\n\n提交的數據：\n${JSON.stringify(submissionData, null, 2)}`);
-  isModalVisible.value = false;
-  router.push({
-    name: 'GeneratedExam',
-    query: submissionData
-  });
+  
+  // 4. 使用 setTimeout 模擬後端處理時間 (例如 1.5 秒)
+  setTimeout(() => {
+    // 5. 隱藏載入動畫
+    isLoading.value = false;
+    
+    // 6. 執行頁面跳轉
+    router.push({
+      name: 'GeneratedExam',
+      query: submissionData
+    });
+  }, 500); // 延遲 1500 毫秒
 };
 
 // 取消按鈕
@@ -116,7 +131,7 @@ const handleCancel = () => {
         <p v-if="previousPageData.subject"><strong>科目：</strong> {{ previousPageData.subject }}</p>
         <p v-if="previousPageData.range"><strong>範圍：</strong> {{ previousPageData.range }}</p>
         <p v-if="previousPageData.customText"><strong>自訂內容：</strong> <span class="block mt-1 p-2 bg-gray-100 rounded text-base whitespace-pre-wrap">{{ previousPageData.customText }}</span></p>
-        
+        <p v-if="previousPageData.points"><strong>知識點數量：</strong> {{ previousPageData.points.split(',').length }} 個知識點</p>
         <!-- 這是當前頁面選擇的，一定會有值 -->
         <p v-if="fullSelectedTemplate"><strong>選擇模板：</strong> <span class="font-bold text-primary">{{ fullSelectedTemplate.title }}</span></p>
       </div>
@@ -131,6 +146,16 @@ const handleCancel = () => {
         </button>
       </div>
     </div>
+  </div>
+  <!-- === ⭐️ 新增：載入動畫 Modal (Loading Overlay) === -->
+  <div v-if="isLoading" class="fixed inset-0 bg-white bg-opacity-75 flex flex-col items-center justify-center z-50 backdrop-blur-sm">
+    <!-- 旋轉的 SVG 圖示 -->
+    <svg class="animate-spin h-16 w-16 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <!-- 提示文字 -->
+    <p class="mt-4 text-xl font-semibold text-dark-gray">正在生成試卷，請稍候...</p>
   </div>
 </div>
 </template>

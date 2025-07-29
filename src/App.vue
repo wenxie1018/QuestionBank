@@ -1,5 +1,6 @@
-<!-- src/App.vue (修正後) -->
 <script setup>
+import Logo from './assets/imgs/logo.png';
+
 </script>
 
 <template>
@@ -9,17 +10,14 @@
     <!-- 這是所有頁面共用的頁首 -->
     <header class="bg-white w-full border-b border-gray-200">
       <div class="container mx-auto px-6 py-6 flex justify-between items-center">
-        <!-- 左欄 -->
-        <div class="w-1/3">
-          <div class="flex items-center space-x-3">
-            <span class="material-icons text-primary text-3xl">hexagon</span>
-            <span class="text-xl font-semibold text-dark-gray">康軒文教事業</span>
-          </div>
-        </div>
-        <div class="w-1/3"></div>
-        <div class="w-1/3 text-right">
-          <router-link to="/" class="text-2xl font-bold text-dark-gray tracking-widest">
-            智能題庫
+        <div class="">
+          <!-- 使用 router-link 讓 Logo 和公司名稱可以點擊返回首頁 -->
+          <router-link to="/">
+            <img 
+              :src="Logo" 
+              alt="康軒智慧評測系統 Logo" 
+              class="h-10 w-auto"
+            >
           </router-link>
         </div>
       </div>

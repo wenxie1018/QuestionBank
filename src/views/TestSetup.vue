@@ -6,10 +6,10 @@ const router = useRouter()
 
 // 使用 ref 來建立響應式數據，綁定表單的值
 const selectedOptions = ref({
-  student: '',
-  grade: '',
-  subject: '',
-  range: '',
+  student: '國中',
+  grade: '一年級',
+  subject: '自然',
+  range: '第一課',
 });
 
 const textAreaContent = ref('');
@@ -17,19 +17,19 @@ const textAreaContent = ref('');
 // 左側提交按鈕
 const handleSubmitLeft = () => {
   if (!selectedOptions.value.student) {
-    alert('請先輸入學籍！');
+    //alert('請先輸入學籍！');
     return;
   }
   if (!selectedOptions.value.grade) {
-    alert('請先輸入年級！');
+    //alert('請先輸入年級！');
     return;
   }
   if (!selectedOptions.value.subject) {
-    alert('請先輸入科目！');
+    //alert('請先輸入科目！');
     return;
   }
   if (!selectedOptions.value.range) {
-    alert('請先輸入範圍！');
+    //alert('請先輸入範圍！');
     return;
   }
   router.push({
