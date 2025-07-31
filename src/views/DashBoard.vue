@@ -3,13 +3,23 @@
 import { ref, computed, watch  } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { useRouter } from 'vue-router';
+import {curriculumData as rawCurriculumData} from '../data/science.js';
+import {studentList as student} from '../data/student.js';
+
+import imgLifePhenomenon from '../assets/imgs/生命現象.JPG';
+import imgCell from '../assets/imgs/細胞.JPG';
+import imgSubstances from '../assets/imgs/細胞所需的物質.JPG';
+import imgCellToIndividual from '../assets/imgs/從細胞到個體.JPG';
+
+//導入數據
+const curriculumData = ref(rawCurriculumData);
+const studentList = ref(student);
 
 // --- 模擬數據區 (圖表設定中的文字也一併中文化) ---
 const router = useRouter();
 // 頂部總覽數據
 const summaryStats = ref({
-  classMood: '😊', // 心情改為班級心情
-  avgRewards: 8,
+  classMood: '😊', 
   avgCompletion: '85%',
   avgScore: '88分',
   totalProblems: 1250,
@@ -98,21 +108,6 @@ const donutChart = ref({
     dataLabels: { enabled: false },
   },
 });
-// --- ⭐️ 2. 新增：定義班級的弱點知識點ID ---
-const weakPoints = ref(new Set([
-  'JNS010102010000', // 變因設定
-  'JNS020202000000', // 擴散作用與滲透作用
-  'JNS040202000000', // 酵素的活性
-  'JNS050303010000', // 體循環與肺循環
-]));
-
-// --- ⭐️ 3. 新增：歷史派卷紀錄的模擬數據 ---
-const assignmentHistory = ref([
-  { id: 1, text: '國中 - 自然 - 2025.07.15' },
-  { id: 2, text: '國中 - 自然 - 2025.07.10' },
-  { id: 3, text: '國中 - 數學 - 2025.07.08' },
-  { id: 4, text: '國小 - 自然 - 2025.07.05' },
-]);
 
 // 本週平均成績環狀進度條數據
 const radialBarChart = ref({
@@ -139,107 +134,46 @@ const radialBarChart = ref({
     labels: ['平均成績'],
   },
 });
-/*
-const knowledgeTreeData = ref({
-  '國中': {
-    '自然': [
-      { id: '01', title: '01_緒論', subPoints: [
-          { id: 'JNS010101000000', text: '科學方法流程' },
-          { id: 'JNS010102010000', text: '變因設定' },
-          { id: 'JNS010102020000', text: '實驗組與對照組' },
-          { id: 'JNS010201000000', text: '實驗室守則與維護' },
-          { id: 'JNS010202000000', text: '實驗室器材' },
-      ]},
-      { id: '02', title: '02_生命的特性', subPoints: [
-          { id: 'JNS020101000000', text: '生命現象' },
-          { id: 'JNS020102000000', text: '細胞學說' },
-          { id: 'JNS020103010000', text: '人類的細胞型態與功能' },
-          { id: 'JNS020103020000', text: '植物的細胞型態與功能' },
-          { id: 'JNS020104000000', text: '動、植物細胞構造的比較' },
-          { id: 'JNS020105010000', text: '複式顯微鏡' },
-          { id: 'JNS020105020000', text: '解剖顯微鏡' },
-          { id: 'JNS020201000000', text: '組成細胞的物質' },
-          { id: 'JNS020202000000', text: '擴散作用與滲透作用' },
-          { id: 'JNS020203000000', text: '物質進出細胞的方式' },
-          { id: 'JNS020301000000', text: '單細胞生物與多細胞生物' },
-          { id: 'JNS020302010000', text: '植物組成層次' },
-          { id: 'JNS020302020000', text: '動物組成層次' },
-          { id: 'JNS020303000000', text: '池水中的小生物' },
-      ]},
-      { id: '03', title: '03_尺度', subPoints: [
-          { id: 'JNS030101010000', text: '巨觀尺度與微觀尺度的定義' },
-          { id: 'JNS030101020000', text: '不同尺度下的物體特徵' },
-          { id: 'JNS030201000000', text: '尺度的表示方式' },
-          { id: 'JNS030202000000', text: '尺度的比較、比例尺' },
-      ]},
-      { id: '04', title: '04_養分', subPoints: [
-          { id: 'JNS040101000000', text: '養分與能量' },
-          { id: 'JNS040102000000', text: '養分的重要性' },
-          { id: 'JNS040103000000', text: '食物中醣類的測定' },
-          { id: 'JNS040201010000', text: '代謝作用' },
-          { id: 'JNS040201020000', text: '酵素的特性與功能' },
-          { id: 'JNS040202000000', text: '酵素的活性' },
-          { id: 'JNS040301000000', text: '葉的構造' },
-          { id: 'JNS040302010000', text: '光合作用的過程與功能' },
-          { id: 'JNS040302020000', text: '光合作用的實驗' },
-          { id: 'JNS040401000000', text: '動物攝食的構造' },
-          { id: 'JNS040402000000', text: '消化作用的定義' },
-          { id: 'JNS040403000000', text: '人體的消化作用' },
-      ]},
-      { id: '05', title: '05_生物的運輸與防禦', subPoints: [
-          { id: 'JNS050101000000', text: '維管束與形成層' },
-          { id: 'JNS050102000000', text: '樹皮與年輪' },
-          { id: 'JNS050201000000', text: '有機養分的運輸與儲存' },
-          { id: 'JNS050202000000', text: '水分的運輸' },
-          { id: 'JNS050301000000', text: '動物的循環系統' },
-          { id: 'JNS050302010000', text: '心臟' },
-          { id: 'JNS050302020000', text: '血管' },
-          { id: 'JNS050302030000', text: '血液(血漿與血球)' },
-          { id: 'JNS050302040000', text: '心音與脈搏' },
-          { id: 'JNS050303010000', text: '體循環與肺循環' },
-          { id: 'JNS050303020000', 'text': '養分、氣體運送與交換' },
-          { id: 'JNS050304010000', text: '淋巴循環系統的組成與功能' },
-          { id: 'JNS050304020000', text: '淋巴循環的途徑' },
-          { id: 'JNS050401010000', text: '皮膜屏障' },
-          { id: 'JNS050401020000', text: '發炎反應' },
-          { id: 'JNS050402010000', text: '人體的專一性防禦' },
-          { id: 'JNS050402020000', text: '疫苗' },
-      ]},
-    ]
-  }
-});*/
 
-const studentList = ref([
-  { id: 'S001', name: '陳冠宇', avatarSeed: 'chen-kuan-yu' },
-  { id: 'S002', name: '林佳穎', avatarSeed: 'lin-chia-ying' },
-  { id: 'S003', name: '黃子軒', avatarSeed: 'huang-tzu-hsuan' },
-  { id: 'S004', name: '張雅婷', avatarSeed: 'chang-ya-ting' },
-  { id: 'S005', name: '李俊毅', avatarSeed: 'li-chun-yi' },
-  { id: 'S006', name: '王心妤', avatarSeed: 'wang-hsin-yu' },
-  { id: 'S007', name: '吳承翰', avatarSeed: 'wu-cheng-han' },
-  { id: 'S008', name: '蔡宜臻', avatarSeed: 'tsai-yi-chen' },
-  { id: 'S009', name: '許家豪', avatarSeed: 'hsu-chia-hao' },
-  { id: 'S010', name: '鄭詩涵', avatarSeed: 'cheng-shih-han' },
-]);
-
-// 2. 使用者的篩選器選擇
-const filters = ref({
-  level: '',
-  subject: '',
+// 2. 將扁平數據轉換為更深層的巢狀結構：單元 -> 課名 -> 教學重點
+const knowledgeTree = computed(() => {
+  return curriculumData.value.map(item => ({
+    id: `${item.單元代碼}-${item.節次代碼}`,
+    unit: item.單元代碼,
+    name: item.課名,
+    points: item.教學重點,
+  }));
 });
 
-// 3. 顯示的知識點 (根據篩選器計算得出) (修正後)
-const displayedChapters = computed(() => {
-  // 只有當學制和科目都選了，才顯示所有章節
-  if (filters.value.level && filters.value.subject) {
-    return knowledgeTreeData.value[filters.value.level]?.[filters.value.subject] || [];
-  }
-  return [];
-});
+const materialImageMap = {
+  '生命現象': imgLifePhenomenon,
+  '細胞': imgCell,
+  '細胞所需的物質': imgSubstances,
+  '從細胞到個體': imgCellToIndividual,
+};
 
-// 4. 管理展開/收合的狀態 (儲存展開的章節 ID)
-const expandedChapters = ref(new Set());
-const toggleChapter = (chapterId) => {
+// 3. 狀態管理 (更新)
+const isGeneratorModalVisible = ref(false);
+const selectedChapters = ref(new Set());     // ⭐️ 修改：現在勾選的是「課名」
+const customPrompt = ref('');
+const isGenerating = ref(false);
+const generatedContent = ref([]);
+const currentPage = ref(1);
+const isPanelCollapsed = ref(false);
+const expandedChapters = ref(new Set());      // ⭐️ 新增：控制單元的展開/收合
+const leftpanel = ref(false);
+
+// 4. 勾選邏輯 (修改為勾選課名)
+const toggleChapterSelection = (chapterName) => {
+  if (selectedChapters.value.has(chapterName)) {
+    selectedChapters.value.delete(chapterName);
+  } else {
+    selectedChapters.value.add(chapterName);
+  }
+};
+
+// 5. 展開/收合單元邏輯
+const toggleChapterExpansion = (chapterId) => {
   if (expandedChapters.value.has(chapterId)) {
     expandedChapters.value.delete(chapterId);
   } else {
@@ -247,66 +181,75 @@ const toggleChapter = (chapterId) => {
   }
 };
 
-// 5. 管理被選取的知識點 (儲存知識點 ID)
-const selectedPoints = ref(new Set());
-const togglePoint = (pointId) => {
-  if (selectedPoints.value.has(pointId)) {
-    selectedPoints.value.delete(pointId);
-  } else {
-    selectedPoints.value.add(pointId);
-  }
-};
-
-// 5. 新增：計算每個章節內已選中知識點數量的方法
-const countSelectedInChapter = (chapter) => {
-  let count = 0;
-  // 遍歷章節下的所有子知識點
-  for (const point of chapter.subPoints) {
-    // 如果這個知識點的 ID 在我們的 selectedPoints 集合中，計數器就+1
-    if (selectedPoints.value.has(point.id)) {
-      count++;
-    }
-  }
-  return count;
-};
-// 3. 新增：Modal 的顯示狀態
-const isConfirmModalVisible = ref(false);
-
-// 4. 修改：提交按鈕的邏輯
-const handleGenerateExam = () => {
-  if (selectedPoints.value.size === 0) {
-    alert('請至少選擇一個知識點！');
+// 6. 生成教材的函式 (更新)
+const generateMaterial = () => {
+  if (selectedChapters.value.size === 0 && !customPrompt.value.trim()) {
+    alert('請至少選擇一個課名或輸入生成指令！');
     return;
   }
-  // 不直接提交，而是打開 Modal
-  isConfirmModalVisible.value = true;
+  
+  leftpanel.value = false;
+  isPanelCollapsed.value = true;
+  isGenerating.value = true;
+  generatedContent.value = [];
+
+  setTimeout(() => {
+    // a. 從勾選的課名中，去對照表查找對應的圖片
+    const newContent = Array.from(selectedChapters.value).map(chapterName => {
+      const imageSrc = materialImageMap[chapterName];
+      return {
+        title: chapterName,
+        // b. 如果找到圖片，就存入 imgSrc；如果沒找到，就生成預設文字
+        imgSrc: imageSrc,
+        text: imageSrc ? null : `這是一段關於「${chapterName}」的詳細教學內容。這裡會包含定義、範例、圖表以及相關練習題，幫助學生深入理解這個概念。`,
+      };
+    });
+    
+    // ... customPrompt 邏輯保持不變 ...
+    if (customPrompt.value.trim()) {
+      newContent.push({
+        title: `根據指令「${customPrompt.value}」生成的內容`,
+        text: `這是一段特別根據您的指令客製化的教學內容，整合了多個知識點的核心概念。`,
+        imgSrc: null,
+      });
+    }
+
+    generatedContent.value = newContent;
+    currentPage.value = 1;
+    isGenerating.value = false;
+  }, 1500);
 };
 
-// 5. 新增：Modal 中的「確認生題」按鈕邏輯
-const confirmAndNavigate = () => {
-  const submissionData = {
-    level: filters.value.level,
-    subject: filters.value.subject,
-    // 將 Set 轉換為用逗號分隔的字串，方便在 URL 中傳遞
-    points: Array.from(selectedPoints.value).join(','),
-  };
+const openGeneratorModal = () => {
+  // 重置所有狀態
+  selectedChapters.value.clear();
+  customPrompt.value = '';
+  isGenerating.value = false;
+  generatedContent.value = [];
+  currentPage.value = 1;
+  isPanelCollapsed.value = false;
+  isGeneratorModalVisible.value = true;
+  leftpanel.value = true;
+};
+const closeGeneratorModal = () => isGeneratorModalVisible.value = false;
 
-  console.log('準備跳轉，傳遞的 Query 參數:', submissionData);
 
-  // 關閉 Modal
-  isConfirmModalVisible.value = false;
+// 7. 分頁邏輯
+const totalPages = computed(() => generatedContent.value.length);
+const prevPage = () => { if (currentPage.value > 1) currentPage.value--; };
+const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++; };
 
-  // 帶上所有參數，跳轉到模板選擇頁面
-  router.push({
-    name: 'ExamTemplate', // 請確保你的路由名稱正確
-    query: submissionData,
-  });
+// 9. ⭐️ 新增：重新開啟左側面板的函式
+const reopenPanel = () => {
+  isPanelCollapsed.value = false;
+  leftpanel.value = true;
 };
 
-// 6. 新增：Modal 中的「取消」按鈕邏輯
-const cancelGeneration = () => {
-  isConfirmModalVisible.value = false;
-};
+// 2. 使用者的篩選器選擇
+const filters = ref({
+  level: '',
+  subject: '',
+});
 
 // 7. 簡化 watch 監聽器
 watch(() => filters.value.level, (newLevel, oldLevel) => {
@@ -333,10 +276,6 @@ watch(() => filters.value.level, (newLevel, oldLevel) => {
         <p class="text-4xl">{{ summaryStats.classMood }}</p>
       </div>
       <div class="text-center">
-        <p class="text-gray-500 text-sm">平均獎勵</p>
-        <p class="text-2xl font-bold text-dark-gray">{{ summaryStats.avgRewards }}<span class="text-base font-normal">次</span></p>
-      </div>
-      <div class="text-center">
         <p class="text-gray-500 text-sm">學習完成率</p>
         <p class="text-2xl font-bold text-dark-gray">{{ summaryStats.avgCompletion }}</p>
       </div>
@@ -348,6 +287,9 @@ watch(() => filters.value.level, (newLevel, oldLevel) => {
         <p class="text-gray-500 text-sm">總出題數</p>
         <p class="text-2xl font-bold text-dark-gray">{{ summaryStats.totalProblems }}</p>
       </div>
+      <button @click="openGeneratorModal" class="bg-amber-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-orange-500 transition-colors tracking-widest text-xl">
+        教材生成
+      </button>
     </div>
 
     <!-- 綜合評語 & 學習領域 (雷達圖) -->
@@ -437,133 +379,115 @@ watch(() => filters.value.level, (newLevel, oldLevel) => {
             </span>
           </router-link>
         </div>
-
       </div>
     </div>
-
-
-    <!--  知識點註解  
-    <div v-if="false" class="lg:col-span-4 bg-white p-6 rounded-xl shadow-subtle mt-6">
-    <h2 class="text-2xl font-bold text-dark-gray mb-6 border-b pb-4">知識樹智慧出題<span class="text-red-600 text-sm">(※紅色表示弱知識點)</span></h2>
-    -->
-    <!-- 篩選器區域 (已簡化為兩欄) 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div>
-        <label for="level" class="block text-sm font-medium text-gray-700 mb-1">學制</label>
-        <select v-model="filters.level" id="level" class="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
-            <option value="" disabled>請選擇學制</option>
-            <option value="國中">國中</option>
-            <option value="國小" disabled>國小 (待開放)</option>
-        </select>
+  </div>
+  <div v-if="isGeneratorModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <!-- ⭐️ 修改：外層容器現在是相對定位，方便面板疊加 -->
+    <div class="bg-gray-100 rounded-2xl shadow-2xl w-full max-w-7xl h-[90vh] flex overflow-hidden relative">
+       <!-- ⭐️ 左側面板 (樣式與結構重構) ⭐️ -->
+      <div
+        v-if="leftpanel"
+        class="bg-white h-full flex flex-col transition-transform duration-500 ease-in-out flex-shrink-0 absolute lg:relative z-20"
+        
+      >
+        <div class="p-6 border-b flex-shrink-0">
+          <h3 class="text-xl font-bold text-dark-gray">選擇教材範圍</h3>
         </div>
-        <div>
-        <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">科目</label>
-        <select v-model="filters.subject" id="subject" class="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
-            <option value="" disabled>請選擇科目</option>
-            <option value="國語" disabled>國語 (待開放)</option>
-            <option value="英語" disabled>英語 (待開放)</option>
-            <option value="數學" disabled>數學 (待開放)</option>
-            <option value="自然">自然</option>
-            <option value="社會" disabled>社會 (待開放)</option>
-        </select>
-        </div>
-    </div>-->
-
-    <!-- 知識樹列表 
-    <div class="border-t pt-6">
-        <div v-if="displayedChapters.length === 0" class="text-center text-gray-500 py-8">
-        請選擇學制與科目以載入知識點。
-        </div>
-        <div v-else class="space-y-2">-->
-        <!-- 遍歷章節 
-        <div v-for="chapter in displayedChapters" :key="chapter.id" class="border rounded-lg">
-            -->
-            <!-- 章節標題 (已加入計數器) 
-            <div @click="toggleChapter(chapter.id)" class="p-3 flex justify-between items-center cursor-pointer bg-gray-50 hover:bg-gray-100">
-            <div class="flex items-center gap-3">
-                <h3 class="font-bold text-lg text-dark-gray">{{ chapter.title }}</h3>
-                <span v-if="countSelectedInChapter(chapter) > 0" class="text-xs font-mono bg-primary text-white rounded-full px-2 py-0.5">
-                已選擇: {{ countSelectedInChapter(chapter) }}
-                </span>
-            </div>
-            <span class="transform transition-transform" :class="{ 'rotate-180': expandedChapters.has(chapter.id) }">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-            </span>
-            </div>
-            -->
-
-             <!-- 知識點列表 (展開/收合) 
-            <div v-show="expandedChapters.has(chapter.id)" class="p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <!-- 可滾動的知識樹 -->
+        <div class="flex-grow p-4 overflow-y-auto">
+          <h2 class="font-bold text-lg text-gray-700">生命的特性</h2>
+          <!-- ⭐️ 1. 簡化知識樹結構 ⭐️ -->
+          <div v-for="chapter in knowledgeTree" :key="chapter.id" class="relative pl-7">
+            <!-- 階層線條 -->
+            <div class="absolute left-3 top-0 bottom-0 w-px bg-gray-200"></div>      
+            <!-- 課名標題 (可展開/收合/勾選) -->
+            <div class="flex items-center justify-between relative">
+              <!-- 階層線條的橫線 -->
+              <div class="absolute -left-4 top-1/2 w-4 h-px bg-gray-200"></div>
+              <div class="flex items-center gap-2 flex-grow cursor-pointer" @click="toggleChapterExpansion(chapter.id)">
+                <span class="material-icons transition-transform text-gray-500" :class="{'rotate-90': expandedChapters.has(chapter.id)}">chevron_right</span>
+                <span class="font-semibold text-gray-800">{{ chapter.name }}</span>
+              </div>
               <div 
-                v-for="point in chapter.subPoints" 
-                :key="point.id"
-                @click="togglePoint(point.id)"
-                class="p-3 border rounded-md cursor-pointer transition-all duration-150"
-                :class="selectedPoints.has(point.id)
-                  ? 'bg-primary bg-opacity-10 border-primary ring-2 ring-primary ring-opacity-50'
-                  : 'bg-white hover:bg-gray-50'"
+                 @click="toggleChapterSelection(chapter.name)" 
+                class="w-5 h-5 border-2 rounded flex-shrink-0 flex items-center justify-center transition-all cursor-pointer" 
+                :class="selectedChapters.has(chapter.name) ? 'bg-primary border-primary' : 'border-gray-400'"
               >
-                <p 
-                  class="font-medium text-gray-800"
-                  :class="{ 'text-red-600 font-bold': weakPoints.has(point.id) }"
-                >
-                  {{ point.text }}
-                </p>
-                <p class="text-xs text-gray-400 mt-1">{{ point.id }}</p>
+                  <svg v-if="selectedChapters.has(chapter.name)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
               </div>
             </div>
-        </div>
-        </div>
-    </div>
-    -->
 
-      <!-- 提交按鈕區域 
-      <div class="mt-8 pt-6 border-t flex justify-end items-center gap-4">
-        <span class="text-gray-600">已選取 {{ selectedPoints.size }} 個知識點</span>
-        <button 
-          @click="handleGenerateExam"
-          :disabled="selectedPoints.size === 0"
-          class="bg-primary text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          開始生題
-        </button>
-      </div>
-      <div class="lg:col-span-4 bg-white p-6 rounded-xl shadow-subtle mt-6">
-        <h2 class="text-2xl font-bold text-dark-gray mb-6">歷史派卷紀錄</h2>
-        <div class="space-y-3">
-          <div v-for="record in assignmentHistory" :key="record.id" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-            <div class="flex items-center">
-              <span class="material-icons text-gray-500 mr-3">history</span>
-              <span class="font-semibold text-dark-gray">{{ record.text }}</span>
+            <!-- 教學重點列表 (展開後顯示) -->
+            <div v-if="expandedChapters.has(chapter.id)" class="pl-7 mt-2 space-y-2 text-sm text-gray-600">
+              <p v-for="point in chapter.points" :key="point" class="relative">
+                <span class="absolute -left-5 top-2.5 w-1 h-1 bg-gray-300 rounded-full"></span>
+                {{ point }}
+              </p>
             </div>
-            <button class="text-sm text-primary hover:underline">查看詳情</button>
           </div>
         </div>
-      </div>
-      -->
-      <!-- === ⭐️ 新增：漂亮的確認 Modal === 
-      <div v-if="isConfirmModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md mx-4">
-          <h3 class="text-2xl font-bold text-dark-gray mb-2 text-center">確認出題範圍</h3>
-          <p class="text-center text-gray-500 mb-6">請確認以下資訊是否正確</p>
-
-          <div class="space-y-3 text-lg border-t border-b py-6 mb-6">
-            <p><strong>學制：</strong> {{ filters.level }}</p>
-            <p><strong>科目：</strong> {{ filters.subject }}</p>
-            <p><strong>知識點數量：</strong> <span class="font-bold text-primary">{{ selectedPoints.size }}</span> 個</p>
-          </div>
-      -->
-          <!-- 按鈕區域 
-          <div class="flex justify-end gap-4">
-            <button @click="cancelGeneration" class="py-2 px-6 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors">
-              返回修改
+        <!-- ⭐️ 2. 優化輸入框和按鈕樣式 ⭐️ -->
+        <div class="p-6 border-t bg-gray-50 flex-shrink-0">
+          <textarea v-model="customPrompt" class="w-full p-3 border-2 border-gray-300 rounded-lg mb-4 focus:border-primary focus:ring-primary transition" rows="3" placeholder="或是在這裡輸入您的特殊指令..."></textarea>
+            <button @click="generateMaterial" class="w-full bg-primary text-white font-bold py-3 px-6 rounded-lg text-lg hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg">
+              生成教材
             </button>
-            <button @click="confirmAndNavigate" class="py-2 px-6 rounded-lg bg-primary text-white hover:bg-blue-600 transition-colors">
-              確認並下一步
-            </button>
-          </div>
         </div>
       </div>
-    </div>-->
+      <!-- 右側內容顯示區 -->
+      <div class="w-full flex-grow flex flex-col p-6">
+        <div class="flex justify-between items-center mb-4">
+          <!-- ⭐️ 新增：重新開啟面板的按鈕 ⭐️ -->
+          <button v-if="isPanelCollapsed" @click="reopenPanel" class="flex items-center gap-2 text-primary hover:underline">
+            <span class="material-icons">edit</span>
+            返回編輯範圍
+          </button>
+          <!-- 佔位符，確保關閉按鈕永遠在右邊 -->
+          <div v-else></div> 
+          <button @click="closeGeneratorModal" class="absolute top-0 right-0 p-2 z-10 hover:bg-gray-200">
+            <span class="material-icons text-3xl">close</span>
+          </button>
+        </div>
+        <!-- 預留位置 / 動畫 / 內容 -->
+        <div class="flex-grow bg-white rounded-lg flex items-center justify-center relative overflow-hidden">
+          <!-- 初始提示 -->
+          <div v-if="!isGenerating && generatedContent.length === 0" class="text-center text-gray-400">
+            <span class="material-icons text-6xl">auto_stories</span>
+            <p class="mt-2 text-xl font-semibold">請從左側選擇教材範圍並生成</p>
+          </div>
+          <!-- 生成動畫 -->
+          <div v-if="isGenerating" class="text-center text-primary">
+            <svg class="animate-spin h-12 w-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p class="mt-4 text-lg font-semibold">AI 智慧生成中...</p>
+          </div>
+          <!-- 生成內容 -->
+          <div v-if="!isGenerating && generatedContent.length > 0" class="w-full h-full p-2 sm:p-4 md:p-8 overflow-y-auto">
+            <!-- ⭐️ 核心修改：使用 v-if / v-else 來判斷顯示圖片還是文字 ⭐️ -->
+            <div class="w-full h-full">
+              <!-- a. 如果當前頁面有 imgSrc，就顯示圖片 -->
+              <div v-if="generatedContent[currentPage - 1].imgSrc" class="w-full h-full flex items-center justify-center">
+                <img 
+                  :src="generatedContent[currentPage - 1].imgSrc" 
+                  :alt="generatedContent[currentPage - 1].title"
+                  class="max-w-full max-h-full object-contain"
+                >
+              </div>
+              <!-- b. 否則，就顯示文字 (prose 樣式) -->
+              <div v-else class="prose max-w-none">
+                <h1>{{ generatedContent[currentPage - 1].title }}</h1>
+                <p>{{ generatedContent[currentPage - 1].text }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 翻頁按鈕 -->
+        <div v-if="totalPages > 0" class="flex justify-center items-center gap-4 mt-4">
+          <button @click="prevPage" :disabled="currentPage === 1" class="px-4 py-2 rounded-md bg-gray-200 disabled:opacity-50">上一頁</button>
+          <span>第 {{ currentPage }} / {{ totalPages }} 頁</span>
+          <button @click="nextPage" :disabled="currentPage === totalPages" class="px-4 py-2 rounded-md bg-gray-200 disabled:opacity-50">下一頁</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
