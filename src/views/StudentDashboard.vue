@@ -556,6 +556,10 @@ watch(isLectureNoteVisible, (newValue) => {
               </div>
             </div>
           </div>
+          <div class="flex justify-between items-start border-b border-gray-300 pb-2">
+            <span>課次範圍</span>
+            <span>補強講義設定</span>
+          </div>
           
           <!-- 使用遞迴元件渲染，確保版面正確 -->
           <div class="space-y-2">
