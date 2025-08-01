@@ -392,11 +392,11 @@ watch(() => filters.value.level, (newLevel, oldLevel) => {
         
       >
         <div class="p-6 border-b flex-shrink-0">
-          <h3 class="text-xl font-bold text-dark-gray">選擇教材範圍</h3>
+          <h3 class="text-3xl font-bold text-dark-gray">選擇教材範圍</h3>
         </div>
         <!-- 可滾動的知識樹 -->
         <div class="flex-grow p-4 overflow-y-auto">
-          <h2 class="font-bold text-lg text-gray-700">生命的特性</h2>
+          <h2 class="font-bold text-2xl text-gray-700">生命的特性</h2>
           <!-- ⭐️ 1. 簡化知識樹結構 ⭐️ -->
           <div v-for="chapter in knowledgeTree" :key="chapter.id" class="relative pl-7">
             <!-- 階層線條 -->
@@ -405,7 +405,7 @@ watch(() => filters.value.level, (newLevel, oldLevel) => {
             <div class="flex items-center justify-between relative">
               <!-- 階層線條的橫線 -->
               <div class="absolute -left-4 top-1/2 w-4 h-px bg-gray-200"></div>
-              <div class="flex items-center gap-2 flex-grow cursor-pointer" @click="toggleChapterExpansion(chapter.id)">
+              <div class="flex items-center gap-2 flex-grow cursor-pointer text-xl" @click="toggleChapterExpansion(chapter.id)">
                 <span class="material-icons transition-transform text-gray-500" :class="{'rotate-90': expandedChapters.has(chapter.id)}">chevron_right</span>
                 <span class="font-semibold text-gray-800">{{ chapter.name }}</span>
               </div>
@@ -419,7 +419,7 @@ watch(() => filters.value.level, (newLevel, oldLevel) => {
             </div>
 
             <!-- 教學重點列表 (展開後顯示) -->
-            <div v-if="expandedChapters.has(chapter.id)" class="pl-7 mt-2 space-y-2 text-sm text-gray-600">
+            <div v-if="expandedChapters.has(chapter.id)" class="pl-7 mt-2 space-y-2 text-base text-gray-600">
               <p v-for="point in chapter.points" :key="point" class="relative">
                 <span class="absolute -left-5 top-2.5 w-1 h-1 bg-gray-300 rounded-full"></span>
                 {{ point }}
